@@ -40,8 +40,6 @@ public:
     void setFileName(QString name);
     QString getFileName();
 
-    void process();
-
     State state();
 
 signals:
@@ -63,6 +61,13 @@ private:
     AVFrame *pFrame, *pFrameRGB;
     AVPacket *packet;
     uint8_t *out_buffer;
+
+    int videoStream;
+    struct SwsContext *img_convert_ctx;
+
+    int initFFMPEG();
+    int process();
+    void clear();
 };
 
 #endif // VIDEOPLAYER_H

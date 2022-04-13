@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     mPlayer = new VideoPlayer;
     ui->pauseButton->setDisabled(true);
+    mPlayer = new VideoPlayer;
+    connect(mPlayer,SIGNAL(sig_GetOneFrame(QImage)),this,SLOT(slotGetOneFrame(QImage)));
 }
 
 MainWindow::~MainWindow()
@@ -41,6 +43,7 @@ void MainWindow::on_startButton_clicked()
         //改变ui
         ui->startButton->setText("Open");
         ui->pauseButton->setDisabled(true);
+        mPlayer = nullptr;
         flag = true;
     }
 }
@@ -77,5 +80,10 @@ void MainWindow::on_pauseButton_clicked()
         ui->pauseButton->setText("pause");
         flag = true;
     }
+}
+
+void MainWindow::slotGetOneFrame(QImage img)
+{
+    ui->widget->displayImage(img);
 }
 

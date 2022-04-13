@@ -11,10 +11,12 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    qdisplay.cpp \
     videoplayer.cpp
 
 HEADERS += \
     mainwindow.h \
+    qdisplay.h \
     videoplayer.h
 
 FORMS += \

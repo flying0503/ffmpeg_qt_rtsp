@@ -18,9 +18,11 @@ public:
 
 private slots:
     void on_startButton_clicked();
+    void on_pauseButton_clicked();
     void closeEvent(QCloseEvent *event);
 
-    void on_pauseButton_clicked();
+
+    void slotGetOneFrame(QImage img);
 
 private:
     Ui::MainWindow *ui;
