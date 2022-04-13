@@ -27,5 +27,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     VideoPlayer *mPlayer;
+    bool mPlayer_run_flag;
 };
 #endif // MAINWINDOW_H

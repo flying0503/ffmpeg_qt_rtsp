@@ -6,10 +6,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    mPlayer = new VideoPlayer;
+    //mPlayer = new VideoPlayer;
+    //connect(mPlayer,SIGNAL(sig_GetOneFrame(QImage)),this,SLOT(slotGetOneFrame(QImage)));
     ui->pauseButton->setDisabled(true);
-    mPlayer = new VideoPlayer;
-    connect(mPlayer,SIGNAL(sig_GetOneFrame(QImage)),this,SLOT(slotGetOneFrame(QImage)));
+    mPlayer_run_flag = false;
 }
 
 MainWindow::~MainWindow()
@@ -25,10 +25,13 @@ void MainWindow::on_startButton_clicked()
     if(flag)
     {
         //将播放路径传入videoplayer
+        mPlayer = new VideoPlayer;
+        connect(mPlayer,SIGNAL(sig_GetOneFrame(QImage)),this,SLOT(slotGetOneFrame(QImage)));
         mPlayer->setFileName(ui->urlList->currentText());
 
         //开启播放线程
         mPlayer->startPlay();
+        mPlayer_run_flag = true;
         //改变ui
         ui->startButton->setText("Close");
         ui->pauseButton->setEnabled(true);
@@ -38,11 +41,13 @@ void MainWindow::on_startButton_clicked()
         if(mPlayer->state()==Paused)
             on_pauseButton_clicked();
 
+        disconnect(mPlayer,SIGNAL(sig_GetOneFrame(QImage)),this,SLOT(slotGetOneFrame(QImage)));
         mPlayer->stopPlay();
-
+        mPlayer_run_flag = false;
         //改变ui
         ui->startButton->setText("Open");
         ui->pauseButton->setDisabled(true);
+        delete mPlayer;
         mPlayer = nullptr;
         flag = true;
     }
@@ -50,12 +55,8 @@ void MainWindow::on_startButton_clicked()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    auto s = mPlayer->state();
-    if(Stoped == s)
+    if(mPlayer_run_flag)
     {
-    }else if (Running ==s) {
-        mPlayer->stopPlay();
-    }else {
         mPlayer->stopPlay();
     }
 }

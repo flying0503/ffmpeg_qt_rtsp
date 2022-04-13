@@ -54,20 +54,6 @@ private:
     QWaitCondition condition;
     std::atomic_bool pauseFlag;
     std::atomic_bool stopFlag;
-
-    AVFormatContext *pFormatCtx;
-    AVCodecContext *pCodecCtx;
-    AVCodec *pCodec;
-    AVFrame *pFrame, *pFrameRGB;
-    AVPacket *packet;
-    uint8_t *out_buffer;
-
-    int videoStream;
-    struct SwsContext *img_convert_ctx;
-
-    int initFFMPEG();
-    int process();
-    void clear();
 };
 
 #endif // VIDEOPLAYER_H
