@@ -82,9 +82,21 @@ void MainWindow::on_pauseButton_clicked()
 
 void MainWindow::slotGetOneFrame()
 {
+    cv::Mat Imag;
     mutex.lock();
-    cv::Mat Imag = mPlayer->getMat();
-    ui->widget->displayImage(Imag);
+    Imag = mPlayer->getMat();
     mutex.unlock();
+
+    int p1_w = Imag.size().width/2;
+    int p1_h = Imag.size().height/2;
+    int p2_w = Imag.size().width/2+50;
+    int p2_h = Imag.size().height/2+50;
+    cv::Point p1(p1_w,p1_h);
+    cv::Point p2(p2_w,p2_h);
+    cv::Scalar color(0,255,0);
+
+    cv::rectangle(Imag,p1,p2,color,3);
+
+    ui->widget->displayImage(Imag);
 }
 
