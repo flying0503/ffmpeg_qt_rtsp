@@ -1,6 +1,32 @@
 #include "videoplayer.h"
 #include <QDebug>
 
+
+
+cv::Mat QImage2cvMat(QImage image)
+{
+    cv::Mat mat;
+    switch(image.format())
+    {
+    case QImage::Format_RGB32:
+        mat = cv::Mat(image.height(), image.width(), CV_8UC4, (void*)image.constBits(), image.bytesPerLine());
+        cv::cvtColor(mat, mat, cv::COLOR_BGRA2BGR);
+        break;
+    case QImage::Format_ARGB32_Premultiplied:
+        mat = cv::Mat(image.height(), image.width(), CV_8UC4, (void*)image.constBits(), image.bytesPerLine());
+        break;
+    case QImage::Format_RGB888:
+        mat = cv::Mat(image.height(), image.width(), CV_8UC3, (void*)image.constBits(), image.bytesPerLine());
+        cv::cvtColor(mat, mat, cv::COLOR_BGR2RGB);
+        break;
+    case QImage::Format_Indexed8:
+        mat = cv::Mat(image.height(), image.width(), CV_8UC1, (void*)image.constBits(), image.bytesPerLine());
+        break;
+    }
+    return mat;
+}
+
+
 VideoPlayer::VideoPlayer()
 {
     pauseFlag = false;
@@ -9,7 +35,7 @@ VideoPlayer::VideoPlayer()
 
 VideoPlayer::~VideoPlayer()
 {
-    qDebug()<<"播放器已经释放";
+    qDebug()<<"VideoPlayer is Release";
 }
 
 void VideoPlayer::startPlay()
@@ -73,6 +99,11 @@ State VideoPlayer::state()
     }
     return s;
 
+}
+
+cv::Mat VideoPlayer::getMat()
+{
+    return mImage;
 }
 
 void VideoPlayer::run()
@@ -201,15 +232,21 @@ void VideoPlayer::run()
                 return;
             }
 
-            if (got_picture) {
+            if (got_picture)
+            {
                 sws_scale(img_convert_ctx,
                         (uint8_t const * const *) pFrame->data,
                         pFrame->linesize, 0, pCodecCtx->height, pFrameRGB->data,
                         pFrameRGB->linesize);
+
+
+
                 //把这个RGB数据 用QImage加载
                 QImage tmpImg((uchar *)out_buffer,pCodecCtx->width,pCodecCtx->height,QImage::Format_RGB32);
-                QImage image = tmpImg.copy(); //把图像复制一份 传递给界面显示
-                emit sig_GetOneFrame(image);  //发送信号
+                mImage = QImage2cvMat(tmpImg);
+                emit sig_GetOneFrame();  //发送信号
+//                QImage image = tmpImg.copy(); //把图像复制一份 传递给界面显示
+//                emit sig_GetOneFrame(image);  //发送信号
             }
         }
         av_free_packet(packet); //释放资源,否则内存会一直上升

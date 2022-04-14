@@ -22,11 +22,12 @@ private slots:
     void closeEvent(QCloseEvent *event);
 
 
-    void slotGetOneFrame(QImage img);
+    void slotGetOneFrame();
 
 private:
     Ui::MainWindow *ui;
     VideoPlayer *mPlayer;
     bool mPlayer_run_flag;
+    QMutex mutex;
 };
 #endif // MAINWINDOW_H

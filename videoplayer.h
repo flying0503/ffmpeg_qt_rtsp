@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QMutex>
 #include <QWaitCondition>
-
+#include <opencv2/opencv.hpp>
 
 extern "C"
 {
@@ -41,10 +41,10 @@ public:
     QString getFileName();
 
     State state();
+    cv::Mat getMat();
 
 signals:
-    void sig_GetOneFrame(QImage); //每获取到一帧图像 就发送此信号
-    void sig_GetRFrame(QImage);   ///2017.8.11---lizhen
+    void sig_GetOneFrame(); //每获取到一帧图像 就发送此信号
 
 protected:
     void run();
@@ -54,6 +54,8 @@ private:
     QWaitCondition condition;
     std::atomic_bool pauseFlag;
     std::atomic_bool stopFlag;
+
+    cv::Mat mImage;
 };
 
 #endif // VIDEOPLAYER_H

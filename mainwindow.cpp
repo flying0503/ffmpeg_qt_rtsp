@@ -6,8 +6,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //mPlayer = new VideoPlayer;
-    //connect(mPlayer,SIGNAL(sig_GetOneFrame(QImage)),this,SLOT(slotGetOneFrame(QImage)));
     ui->pauseButton->setDisabled(true);
     mPlayer_run_flag = false;
 }
@@ -26,7 +24,7 @@ void MainWindow::on_startButton_clicked()
     {
         //将播放路径传入videoplayer
         mPlayer = new VideoPlayer;
-        connect(mPlayer,SIGNAL(sig_GetOneFrame(QImage)),this,SLOT(slotGetOneFrame(QImage)));
+        connect(mPlayer,SIGNAL(sig_GetOneFrame()),this,SLOT(slotGetOneFrame()));
         mPlayer->setFileName(ui->urlList->currentText());
 
         //开启播放线程
@@ -41,7 +39,7 @@ void MainWindow::on_startButton_clicked()
         if(mPlayer->state()==Paused)
             on_pauseButton_clicked();
 
-        disconnect(mPlayer,SIGNAL(sig_GetOneFrame(QImage)),this,SLOT(slotGetOneFrame(QImage)));
+        disconnect(mPlayer,SIGNAL(sig_GetOneFrame()),this,SLOT(slotGetOneFrame()));
         mPlayer->stopPlay();
         mPlayer_run_flag = false;
         //改变ui
@@ -68,7 +66,6 @@ void MainWindow::on_pauseButton_clicked()
 
     if(flag)
     {
-
         //暂停播放线程开启播放线程
         mPlayer->pause();
         //改变ui
@@ -83,8 +80,11 @@ void MainWindow::on_pauseButton_clicked()
     }
 }
 
-void MainWindow::slotGetOneFrame(QImage img)
+void MainWindow::slotGetOneFrame()
 {
-    ui->widget->displayImage(img);
+    mutex.lock();
+    cv::Mat Imag = mPlayer->getMat();
+    ui->widget->displayImage(Imag);
+    mutex.unlock();
 }
 

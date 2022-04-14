@@ -41,7 +41,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QDisplay" name="widget" native="true"/>
+       <widget class="QCVDisplay" name="widget" native="true"/>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -85,9 +85,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QDisplay</class>
+   <class>QCVDisplay</class>
    <extends>QWidget</extends>
-   <header>qdisplay.h</header>
+   <header>qcvdisplay.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
